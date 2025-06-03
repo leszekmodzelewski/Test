@@ -1,0 +1,12 @@
+<Window x:Class="Simple3DCAD.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Logowanie" Height="200" Width="300">
+    <StackPanel Margin="10">
+        <TextBlock Text="Użytkownik" />
+        <TextBox x:Name="txtUser" />
+        <TextBlock Text="Hasło" Margin="0,10,0,0"/>
+        <PasswordBox x:Name="txtPass" />
+        <Button Content="Zaloguj" Margin="0,10,0,0" Click="BtnLogin_Click"/>
+    </StackPanel>
+</Window>
