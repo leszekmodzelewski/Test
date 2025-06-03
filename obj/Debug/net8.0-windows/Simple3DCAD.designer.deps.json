@@ -1,0 +1,43 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "HelixToolkit.Wpf/2.27.0": {
+        "runtime": {
+          "lib/net462/HelixToolkit.Wpf.dll": {
+            "assemblyVersion": "2.27.0.0",
+            "fileVersion": "2.27.0.0"
+          }
+        }
+      },
+      "netDxf/2023.11.10": {
+        "runtime": {
+          "lib/net6.0/netDxf.dll": {
+            "assemblyVersion": "2023.11.10.0",
+            "fileVersion": "2023.11.10.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "HelixToolkit.Wpf/2.27.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-tmWAMl6Ohfix/aEk2VoVpMUrGph7q4L9+L4rL9XS8lxGLM5gYp/w5AjtJGJfrs4ENy9cV16kl1aHvARJk/F4HA==",
+      "path": "helixtoolkit.wpf/2.27.0",
+      "hashPath": "helixtoolkit.wpf.2.27.0.nupkg.sha512"
+    },
+    "netDxf/2023.11.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7BFtw6P5Zfli59HJJ3INq6InaWzgNnC7qQopP+5H8CUg/7FjUX0qG63kLLPplOy1sZSjnwGzAPEjk67g1O7LuQ==",
+      "path": "netdxf/2023.11.10",
+      "hashPath": "netdxf.2023.11.10.nupkg.sha512"
+    }
+  }
+}
