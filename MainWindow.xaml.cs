@@ -72,8 +72,7 @@ namespace Simple3DCAD
             if (hit != null && hit.Visual is LabeledSphere sphere)
             {
                 var point = sphere.DataPoint;
-                MessageBox.Show($"X: {point.X:0.###}\nY: {point.Y:0.###}\nZ: {point.Z:0.###}",
-                    "Pozycja punktu", MessageBoxButton.OK, MessageBoxImage.Information);
+                statusText.Text = $"X: {point.X:0.###}   Y: {point.Y:0.###}   Z: {point.Z:0.###}";
             }
         }
         private void pointSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

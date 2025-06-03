@@ -4,39 +4,51 @@
         xmlns:helix="http://helix-toolkit.org/wpf"
         Title="CAD 3D" Height="600" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
 
-        <!-- Helix scena -->
-        <helix:HelixViewport3D x:Name="viewPort3D"
+        <!-- Scena 3D -->
+        <Grid Grid.Row="0">
+            <!-- Helix scena -->
+            <helix:HelixViewport3D x:Name="viewPort3D"
                                Background="Black"
                                ZoomExtentsWhenLoaded="True"
                                MouseDown="viewPort3D_MouseDown" />
 
-        <!-- Menu u góry -->
-        <Menu VerticalAlignment="Top" Background="Gray" Height="25">
-            <MenuItem Header="Plik">
-                <MenuItem Header="Otwórz DXF" Click="OpenDXF_Click"/>
-                <MenuItem Header="Zaloguj się" Click="Login_Click"/>
-            </MenuItem>
-        </Menu>
+            <!-- Menu u góry -->
+            <Menu VerticalAlignment="Top" Background="Gray" Height="25">
+                <MenuItem Header="Plik">
+                    <MenuItem Header="Otwórz DXF" Click="OpenDXF_Click"/>
+                    <MenuItem Header="Zaloguj się" Click="Login_Click"/>
+                </MenuItem>
+            </Menu>
 
-        <!-- Pływający suwak -->
-        <Border Background="#AA222222"
+            <!-- Pływający suwak -->
+            <Border Background="#AA222222"
                 CornerRadius="5"
                 Padding="5"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Right"
                 Margin="0,40,10,0">
-            <StackPanel Width="100">
-                <TextBlock Text="Wielkość" Foreground="White" Margin="0,0,0,5"/>
-                <Slider x:Name="pointSizeSlider"
-                        Minimum="0.005"
-                        Maximum="1"
-                        Value="2"
-                        TickFrequency="0.05"
+                <StackPanel Width="100">
+                    <TextBlock Text="Wielkość" Foreground="White" Margin="0,0,0,5"/>
+                    <Slider x:Name="pointSizeSlider"
+                        Minimum="0.05"
+                        Maximum="10"
+                        Value="0.3"
+                        TickFrequency="0.01"
                         IsSnapToTickEnabled="True"
                         ValueChanged="pointSizeSlider_ValueChanged"/>
-            </StackPanel>
-        </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
 
+        <!-- Pasek statusu -->
+        <StatusBar Grid.Row="1" Background="DarkGray">
+            <TextBlock x:Name="statusText" Foreground="White" FontFamily="Consolas" />
+        </StatusBar>
     </Grid>
+
 </Window>
