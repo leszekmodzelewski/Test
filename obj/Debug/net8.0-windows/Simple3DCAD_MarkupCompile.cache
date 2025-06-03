@@ -1,5 +1,5 @@
 ﻿Simple3DCAD
-1.0.0.0
+
 
 winexe
 C#
@@ -12,7 +12,7 @@ TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 C:\Users\user\source\repos\Simple3DCAD\Simple3DCAD\App.xaml
 2-216653475
 
-8-959045753
+690542492
 200214707021
 LoginWindow.xaml;MainWindow.xaml;
 
