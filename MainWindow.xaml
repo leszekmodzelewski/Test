@@ -10,6 +10,6 @@
                 <MenuItem Header="Zaloguj się" Click="Login_Click"/>
             </MenuItem>
         </Menu>
-        <helix:HelixViewport3D x:Name="viewPort3D" ZoomExtentsWhenLoaded="True"/>
+        <helix:HelixViewport3D x:Name="viewPort3D" ZoomExtentsWhenLoaded="True" Background="Black"/>
     </DockPanel>
 </Window>
