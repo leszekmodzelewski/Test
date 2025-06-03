@@ -46,7 +46,7 @@ public static class DxfParser
         var result = new List<Point3D>();
         try
         {
-            var doc = DxfDocument.Load(finalPath);
+            var doc = DxfDocument.Load(path);
 
             foreach (var point in doc.Entities.Points)
             {
@@ -64,9 +64,20 @@ public static class DxfParser
         return result;
     }
 
-    /// <summary>
-    /// U¿ywa ODA File Converter do konwersji starego pliku DXF do nowszego formatu (AutoCAD 2010)
-    /// </summary>
+    public static List<(Point3D, Point3D)> LoadLines(string path)
+    {
+        var doc = DxfDocument.Load(path);
+        var result = new List<(Point3D, Point3D)>();
+
+        foreach (var line in doc.Entities.Lines)
+        {
+            var start = new Point3D(line.StartPoint.X, line.StartPoint.Y, line.StartPoint.Z);
+            var end = new Point3D(line.EndPoint.X, line.EndPoint.Y, line.EndPoint.Z);
+            result.Add((start, end));
+        }
+
+        return result;
+    }
     private static bool ConvertDxf(string inputPath, string outputPath)
     {
         string odaPath = @"C:\Program Files\ODA\ODAFileConverter\ODAFileConverter.exe"; // Œcie¿kê dostosuj do siebie
