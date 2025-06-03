@@ -44,12 +44,12 @@ namespace Simple3DCAD
                 // Dodaj kulki jako punkty
                 foreach (var p in points)
                 {
-                    var sphere = new SphereVisual3D
+                    var sphere = new LabeledSphere
                     {
                         Center = p,
                         Radius = pointSizeSlider.Value,
                         Material = MaterialHelper.CreateMaterial(Colors.Yellow),
-                        Tag = p // zapamiętaj współrzędne jako tag
+                        DataPoint = p
                     };
                     viewPort3D.Children.Add(sphere);
                 }
@@ -69,10 +69,19 @@ namespace Simple3DCAD
             var mousePos = e.GetPosition(viewPort3D);
             var hit = viewPort3D.Viewport.FindHits(mousePos).FirstOrDefault();
 
-            if (hit != null && hit.Visual is SphereVisual3D sphere && sphere.Tag is Point3D point)
+            if (hit != null && hit.Visual is LabeledSphere sphere)
             {
+                var point = sphere.DataPoint;
                 MessageBox.Show($"X: {point.X:0.###}\nY: {point.Y:0.###}\nZ: {point.Z:0.###}",
                     "Pozycja punktu", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        private void pointSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // Zmień rozmiar wszystkich istniejących kulek
+            foreach (var sphere in viewPort3D.Children.OfType<LabeledSphere>())
+            {
+                sphere.Radius = pointSizeSlider.Value;
             }
         }
         private void Login_Click(object sender, RoutedEventArgs e)
