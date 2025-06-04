@@ -6,94 +6,124 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
+
+public class ColoredPoint
+{
+    public Point3D Position { get; set; }
+    public Color Color { get; set; }
+}
+
+public class ColoredLine
+{
+    public Point3D Start { get; set; }
+    public Point3D End { get; set; }
+    public Color Color { get; set; }
+}
 
 public static class DxfParser
 {
-    public static List<Point3D> LoadPoints(string path)
+    public static List<ColoredPoint> LoadColoredPoints(string path)
     {
-        string finalPath = path;
+        string finalPath = EnsureCompatibleDxf(path);
+        var result = new List<ColoredPoint>();
 
-        // SprawdŸ wersjê DXF i automatycznie skonwertuj jeœli R12 lub R10
+        try
+        {
+            var doc = DxfDocument.Load(finalPath);
+
+            foreach (var point in doc.Entities.Points)
+            {
+                var pos = new Point3D(point.Position.X, point.Position.Y, point.Position.Z);
+                var acColor = point.Color.IsByLayer ? point.Layer.Color : point.Color;
+                var mediaColor = Color.FromRgb(acColor.R, acColor.G, acColor.B);
+
+                result.Add(new ColoredPoint
+                {
+                    Position = pos,
+                    Color = mediaColor
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"B³¹d odczytu punktów DXF: {ex.Message}", "B³¹d", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        return result;
+    }
+
+    public static List<ColoredLine> LoadColoredLines(string path)
+    {
+        string finalPath = EnsureCompatibleDxf(path);
+        var result = new List<ColoredLine>();
+
+        try
+        {
+            var doc = DxfDocument.Load(finalPath);
+
+            foreach (var line in doc.Entities.Lines)
+            {
+                var start = new Point3D(line.StartPoint.X, line.StartPoint.Y, line.StartPoint.Z);
+                var end = new Point3D(line.EndPoint.X, line.EndPoint.Y, line.EndPoint.Z);
+                var acColor = line.Color.IsByLayer ? line.Layer.Color : line.Color;
+                var mediaColor = Color.FromRgb(acColor.R, acColor.G, acColor.B);
+
+                result.Add(new ColoredLine
+                {
+                    Start = start,
+                    End = end,
+                    Color = mediaColor
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"B³¹d odczytu linii DXF: {ex.Message}", "B³¹d", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        return result;
+    }
+
+    private static string EnsureCompatibleDxf(string path)
+    {
         try
         {
             var versionDoc = DxfDocument.Load(path);
             if (versionDoc.DrawingVariables?.AcadVer < DxfVersion.AutoCad2000)
             {
-                MessageBox.Show("Plik DXF jest w starej wersji (AutoCAD R12 lub R10). Próbujê automatycznej konwersji...",
-                    "Konwersja pliku", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Plik DXF jest w starej wersji (R12/R10). Trwa konwersja...", "Konwersja DXF", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 string convertedPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".dxf");
                 if (ConvertDxf(path, convertedPath))
                 {
-                    finalPath = convertedPath;
+                    return convertedPath;
                 }
-                else
-                {
-                    MessageBox.Show("Nie uda³o siê automatycznie przekonwertowaæ pliku. Zapisz rêcznie jako AutoCAD 2000 lub nowszy.",
-                        "B³¹d konwersji", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return new List<Point3D>();
-                }
+
+                MessageBox.Show("Nie uda³o siê przekonwertowaæ pliku. U¿yj AutoCAD 2000+ i zapisz rêcznie.", "B³¹d konwersji", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"B³¹d podczas sprawdzania wersji DXF: {ex.Message}", "B³¹d", MessageBoxButton.OK, MessageBoxImage.Error);
-            return new List<Point3D>();
+            MessageBox.Show("B³¹d analizy wersji DXF: " + ex.Message, "B³¹d", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        // Wczytanie punktów z zabezpieczeniem
-        var result = new List<Point3D>();
-        try
-        {
-            var doc = DxfDocument.Load(path);
-
-            foreach (var point in doc.Entities.Points)
-            {
-                if (point?.Position != null)
-                {
-                    result.Add(new Point3D(point.Position.X, point.Position.Y, point.Position.Z));
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"B³¹d podczas odczytu punktów DXF: {ex.Message}", "B³¹d", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        return result;
+        return path;
     }
 
-    public static List<(Point3D, Point3D)> LoadLines(string path)
-    {
-        var doc = DxfDocument.Load(path);
-        var result = new List<(Point3D, Point3D)>();
-
-        foreach (var line in doc.Entities.Lines)
-        {
-            var start = new Point3D(line.StartPoint.X, line.StartPoint.Y, line.StartPoint.Z);
-            var end = new Point3D(line.EndPoint.X, line.EndPoint.Y, line.EndPoint.Z);
-            result.Add((start, end));
-        }
-
-        return result;
-    }
     private static bool ConvertDxf(string inputPath, string outputPath)
     {
-        string odaPath = @"C:\Program Files\ODA\ODAFileConverter\ODAFileConverter.exe"; // Œcie¿kê dostosuj do siebie
+        string odaPath = @"C:\Program Files\ODA\ODAFileConverter\ODAFileConverter.exe"; // dostosuj
         if (!File.Exists(odaPath))
         {
-            MessageBox.Show("Brak ODAFileConverter. Pobierz i zainstaluj z: https://www.opendesign.com/guestfiles/oda_file_converter",
+            MessageBox.Show("Brak ODAFileConverter. Pobierz z: https://www.opendesign.com/guestfiles/oda_file_converter",
                 "Konwersja DXF", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
 
         string inputDir = Path.GetDirectoryName(inputPath);
-        string outputDir = Path.GetDirectoryName(outputPath);
         string fileName = Path.GetFileName(inputPath);
-
-        // ODA nie pozwala na konwersjê pojedynczego pliku — trzeba foldery
-        // Wyczyszczony folder tymczasowy
         string tempOutputDir = Path.Combine(Path.GetTempPath(), "DXF_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempOutputDir);
 
@@ -116,17 +146,12 @@ public static class DxfParser
                 File.Copy(convertedFile, outputPath, true);
                 return true;
             }
-            else
-            {
-                MessageBox.Show("Nie znaleziono skonwertowanego pliku. Konwersja prawdopodobnie siê nie powiod³a.",
-                    "B³¹d konwersji", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
         }
         catch (Exception ex)
         {
             MessageBox.Show("B³¹d konwersji: " + ex.Message, "Wyj¹tek", MessageBoxButton.OK, MessageBoxImage.Error);
-            return false;
         }
+
+        return false;
     }
 }
